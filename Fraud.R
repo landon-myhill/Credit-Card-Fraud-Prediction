@@ -142,13 +142,16 @@ predictions <- ifelse(pred_probs > 0.5, 1, 0)
 # Convert predicted probabilities to binary predictions
 threshold <- 0.0174
 pred_classes <- ifelse(pred_probs > threshold, "Yes", "No")
+
 # Actual classes
 actual_classes <- ifelse(test_data$is_fraud == 1, "Yes", "No")
+
 # Create the confusion matrix
 conf_matrix <- table(
   `Actual` = actual_classes,
   `Predicted` = pred_classes
 )
+
 # Print the confusion matrix
 print(conf_matrix)
 
@@ -156,6 +159,7 @@ print(conf_matrix)
 data$is_fraud <- as.numeric(as.character(data$is_fraud))
 fraud_counts <- table(data$is_fraud)
 print(fraud_counts)
+
 fraud_ratio <- fraud_counts[2] / fraud_counts[1]
 print(paste("Ratio of Fraud to Non-Fraud Cases:", round(fraud_ratio, 4)))
 
@@ -166,11 +170,10 @@ FN <- conf_matrix["Yes", "No"]  # False Negatives
 TN <- conf_matrix["No", "No"]   # True Negatives
 
 # Calculate metrics
-accuracy <- (TP + TN) / (TP + FP + FN + TN)
+accuracy <- (TP + TN) / (TP + FP + FN + TN)  # Corrected the accuracy calculation line
 sensitivity <- TP / (TP + FN)  # Recall
 specificity <- TN / (TN + FP)
 
-accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
 precision <- TP / (TP + FP)
 F1_score <- 2 * (precision * sensitivity) / (precision + sensitivity)
 
@@ -178,13 +181,15 @@ F1_score <- 2 * (precision * sensitivity) / (precision + sensitivity)
 cat("Accuracy:", round(accuracy, 4), "\n")
 cat("Sensitivity (Recall):", round(sensitivity, 4), "\n")
 cat("Specificity:", round(specificity, 4), "\n")
-
+cat("Precision:", round(precision, 4), "\n")
+cat("F1 Score:", round(F1_score, 4), "\n")
 
 # ROC and AUC
 roc_curve <- roc(as.numeric(test_data$is_fraud), pred_probs)
 plot(roc_curve, main = "ROC Curve for Fraud Detection")
 auc_value <- auc(roc_curve)
 print(paste("AUC:", round(auc_value, 4)))
+
 
 
 
